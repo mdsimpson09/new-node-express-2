@@ -1,0 +1,65 @@
+
+
+# GET request was still sending 200 status code without correct user info. Corrected code to send a 404 when no user is found and to send a 401 when a user is not authorized. the test was also changed to include the 404 not found status code.
+
+/** GET /[username]
+ *
+ * Get details on a user. Only logged-in users should be able to use this.
+ *
+ * It should return:
+ *     {user: {username, first_name, last_name, phone, email}}
+ *
+ * If user cannot be found, return a 404 err.
+ *
+ */
+
+# old code 
+router.get('/:username', authUser, requireLogin, async function(
+  req,
+  res,
+  next
+) {
+  try {
+    let user = await User.get(req.params.username);
+    return res.json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
+# new code with 404 catch 
+router.get('/:username', authUser, requireLogin, async function(req, res, next) {
+  try {
+    let user = await User.get(req.params.username);
+    if (!user) {
+      // If no user is found, return a 404 status code
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.json({ user });
+  } catch (err) {
+    return next(err); 
+  }
+});
+
+# added to test to include 404 "not found"  
+ test("should return 404 if the user cannot be found", async function() {
+    const response = await request(app)
+      .get("/users/nonExistingUser")
+      .send({ _token: tokens.u1 }); // Assuming tokens.u1 is a valid token for an authenticated user
+    expect(response.statusCode).toBe(404);
+    expect(response.body).toEqual({
+      message: "User not found",
+    });
+  });
+});
+
+
+# Delete / users/[username] was testing for password hash before registration 
+DELETE /users/[username] › should hash passwords before saving to the database
+
+    data and hash arguments required
+
+      233 |     const user = await User.get("new_user");
+      234 |     expect(user.password).not.toEqual("password123");
+    > 235 |     expect(await bcrypt.compare("password123", user.password)).toBe(tr
+
+# removed console.log for auth/header in middelware that was causing failures 
