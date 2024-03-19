@@ -63,3 +63,30 @@ DELETE /users/[username] › should hash passwords before saving to the database
     > 235 |     expect(await bcrypt.compare("password123", user.password)).toBe(tr
 
 # removed console.log for auth/header in middelware that was causing failures 
+
+
+ FAIL  __tests__/routes.test.js
+  ✕ should hash passwords before saving to the database (81 ms)
+  ✓ should allow a correct username/password to log in securely (10 ms)
+  ✓ should return 404 if the user cannot be found (14 ms)
+  POST /auth/register
+    ✓ should allow a user to register in (118 ms)
+    ✓ should not allow a user to register with an existing username (13 ms)
+  POST /auth/login
+    ✓ should allow a correct username/password to log in (10 ms)
+  GET /users
+    ✓ should deny access if no token provided (9 ms)
+    ✓ should list all users (47 ms)
+  GET /users/[username]
+    ✓ should deny access if no token provided (9 ms)
+    ✓ should return data on u1 (15 ms)
+  PATCH /users/[username]
+    ✓ should deny access if no token provided (9 ms)
+    ✓ should deny access if not admin/right user (11 ms)
+    ✓ should patch data if admin (13 ms)
+    ✓ should disallowing patching not-allowed-fields (12 ms)
+    ✓ should return 401 if cannot find (10 ms)
+  DELETE /users/[username]
+    ✓ should deny access if no token provided (8 ms)
+    ✓ should deny access if not admin (10 ms)
+    ✓ should allow if admin (11 ms)

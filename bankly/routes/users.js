@@ -34,19 +34,6 @@ router.get('/', authUser, requireLogin, async function(req, res, next) {
  * If user cannot be found, return a 404 err.
  *
  */
-
-router.get('/:username', authUser, requireLogin, async function(
-  req,
-  res,
-  next
-) {
-  try {
-    let user = await User.get(req.params.username);
-    return res.json({ user });
-  } catch (err) {
-    return next(err);
-  }
-});
 router.get('/:username', authUser, requireLogin, async function(req, res, next) {
   try {
     let user = await User.get(req.params.username);
@@ -56,9 +43,10 @@ router.get('/:username', authUser, requireLogin, async function(req, res, next) 
     }
     return res.json({ user });
   } catch (err) {
-    return next(err); // Pass any other errors to the error handler
+    return next(err); 
   }
 });
+
 
 /** PATCH /[username]
  *
@@ -106,30 +94,17 @@ router.patch('/:username', authUser, requireLogin, requireAdmin, async function(
  * If user cannot be found, return a 404 err.
  */
 
-// router.delete('/:username', authUser, requireAdmin, async function(
-//   req,
-//   res,
-//   next
-// ) {
-//   try {
-//     User.delete(req.params.username);
-//     return res.json({ message: 'deleted' });
-//   } catch (err) {
-//     return next(err);
-//   }
-// }); // end
-
-router.delete('/:username', authUser, requireAdmin, async function(req, res, next) {
+router.delete('/:username', authUser, requireAdmin, async function(
+  req,
+  res,
+  next
+) {
   try {
-    const result = await User.delete(req.params.username);
-    // Assuming `User.delete()` returns a truthy value if a user was deleted, and falsy if not found
-    if (!result) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    User.delete(req.params.username);
     return res.json({ message: 'deleted' });
   } catch (err) {
     return next(err);
   }
-});
+}); // end
 
 module.exports = router;
